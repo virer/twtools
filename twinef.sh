@@ -15,9 +15,6 @@ chmod 600 $IGNOREFILELIST
 # Get the last report file
 REPORTFILE=`ls -1rt /var/lib/tripwire/report/ | tail -1`
 
-# Change directory
-cd /etc/tripwire
-
 # Get the list of files to be ignored
 twprint -m r -r /var/lib/tripwire/report/$REPORTFILE | grep "File system error" -A 1 | awk '/Filename/ { print $2 }' > $IGNOREFILELIST
 
@@ -31,8 +28,11 @@ for fil2ign in `cat $IGNOREFILELIST` ; do
         mv /etc/tripwire/twpol.txt.1 /etc/tripwire/twpol.txt
 done
 
+# Modify hostname in the pol file
+sed -i "s/^HOSTNAME=.*$/HOSTNAME=$HOSTNAME;/1" /etc/tripwire/twpol.txt
+
 # Sign new Pol file
-/usr/sbin/twadmin --create-polfile -S site.key /etc/tripwire/twpol.txt
+/usr/sbin/twadmin --create-polfile /etc/tripwire/twpol.txt
 
 [ -e /var/lib/tripwire/$HOSTNAME.twd.BAK ] && rm -f /var/lib/tripwire/$HOSTNAME.twd.BAK
 mv /var/lib/tripwire/$HOSTNAME.twd /var/lib/tripwire/$HOSTNAME.twd.BAK
