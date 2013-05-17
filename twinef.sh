@@ -19,7 +19,7 @@ REPORTFILE=`ls -1rt /var/lib/tripwire/report/ | tail -1`
 /usr/sbin/twprint -m r -r /var/lib/tripwire/report/$REPORTFILE | grep "File system error" -A 1 | awk '/Filename/ { print $2 }' > $IGNOREFILELIST
 
 # Backup twpol.txt 
-[ ! -e /etc/tripwire/twpol.txt.BAK ] && cp /etc/tripwire/twpol.txt /etc/tripwire/twpol.txt.BAK
+[ ! -e /etc/tripwire/twpol.txt.BAK ] && [ -e /etc/tripwire/twpol.txt ] && cp /etc/tripwire/twpol.txt /etc/tripwire/twpol.txt.BAK
 
 # Get currently used Pol file
 /usr/sbin/twadmin -m p > /etc/tripwire/twpol.txt
